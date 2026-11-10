@@ -1,2 +1,1 @@
-Lumina Studio V83.1 — Launcher close behavior fix
-Modular GitHub Pages build
+Lumina Studio V83.2 — Seamless single-tab launch (no leftover starter)

@@ -1,0 +1,19 @@
+{
+  "release": "V83.2",
+  "mode": "single-tab default, optional separate about:blank",
+  "claims": {
+    "no_extra_tab_default": true,
+    "automatic_original_tab_close": false,
+    "same_tab_about_blank": false
+  },
+  "reason": "Browsers restrict window.close() on browser-created tabs. Eliminating the second tab avoids the blocked close.",
+  "checks": {
+    "structure": "26/26 passed",
+    "save_bridge": "9/9 passed",
+    "starter_close_fallback": "7/7 passed",
+    "new_single_tab_paths": "11/11 passed",
+    "javascript_syntax": "9/9 passed",
+    "synthetic_chromium_mount": "1/1 passed; mock workspace and fake hosted base, zero new popup calls"
+  },
+  "browser_hosted_validation": "NOT VERIFIED: test container blocks navigation to localhost and hosted URLs; run on deployed GitHub Pages/Netlify site"
+}

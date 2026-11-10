@@ -29,13 +29,13 @@
  </section>
   <section class="right"><div class="glow"></div><div class="panel">
     <div class="panel-top"><div><div class="panel-label">Your personal workspace</div><h2>Start Lumina</h2></div><div class="ready"><i></i> Ready</div></div>
-    <p class="launch-subtitle">Lumina will <b>try opening about:blank when you visit</b>. If Chrome blocks it, click below. <b>Browser-opened starter tabs need Ctrl+W to close.</b> Lumina never closes your workspace tab.</p>
+    <p class="launch-subtitle">Lumina now opens <b>in this tab automatically</b>, so there is no leftover starter to close. The optional separate <b>about:blank</b> mode opens a second tab that Chrome may prevent this page from closing. Lumina never closes your workspace tab.</p>
     <div class="panel-launch-actions">
-      <button class="primary-button" type="button" id="launch">Open about:blank now</button>
-      <button class="secondary-button" type="button" id="openSeparateTab" hidden>Open another about:blank tab</button>
-      <button class="secondary-button" type="button" id="openInTab">Start in this tab (URL stays visible)</button>
+      <button class="primary-button" type="button" id="launch">Start Lumina — no extra tab</button>
+      <button class="secondary-button" type="button" id="openSeparateTab">Open separate about:blank tab</button>
+      <button class="secondary-button" type="button" id="openInTab" hidden>Start in this tab (URL stays visible)</button>
     </div>
-    <label class="launch-toggle" for="autoOpen"><input id="autoOpen" type="checkbox"><span><strong>Try about:blank automatically</strong><small>On by default. Attempt to open Lumina as soon as this site loads. If Chrome blocks it, use Open about:blank now. Turn this off to keep the launcher visible.</small></span></label>
+    <label class="launch-toggle" for="autoOpen"><input id="autoOpen" type="checkbox"><span><strong>Auto-start Lumina in this tab</strong><small>On by default. No extra tab and no close permission needed. The website address remains visible. Turn off to stay on the launcher.</small></span></label>
     <div id="status" class="launch-status" role="status" aria-live="polite"></div>
 
     <details id="launchDiagnostics" class="launch-debug" open>
@@ -51,8 +51,8 @@
       <div id="diagCheckResults" class="diag-results" aria-live="polite"></div>
     </details>
     <div id="popupBlockedHelp" class="launch-finished" hidden>
-      <p><strong>Chrome blocked the automatic about:blank tab.</strong> Try <b>Open about:blank now</b> above. To allow future automatic launches, click the blocked pop-up icon in Chrome's address bar, select <b>Always allow pop-ups and redirects from this site</b>, and reload. On a managed Chromebook, your administrator may restrict this.</p>
-      <p><strong>Still blocked?</strong> Start in this tab to use Lumina without a popup. That option keeps the website address, not about:blank.</p>
+      <p><strong>Chrome blocked the optional about:blank tab.</strong> Use <b>Start Lumina — no extra tab</b> instead, or enable pop-ups for this site in your own browser settings.</p>
+      <p>The default single-tab mode works without pop-ups. Its URL remains the hosted website address, not about:blank.</p>
     </div>
     <div id="launcherCloseFallback" class="launch-finished" hidden>
       <p><strong>Check the Lumina tab before closing this launcher.</strong> Lumina is ready in the other tab. Chrome normally will not let a manually opened starter close itself, so use your browser’s close-tab shortcut.</p>
@@ -84,7 +84,7 @@
   </div></section>
 
 </div>
-<footer><div>© Lumina Studio <span>· A more focused workspace</span></div><div>Lumina V83.1 · Starter Closure Guidance</div></footer>
+<footer><div>© Lumina Studio <span>· A more focused workspace</span></div><div>Lumina V83.2 · Seamless Single-Tab Launch</div></footer>
 <script src="js/config.js"></script>
 <script src="js/launcher.js"></script>
 </body></html>
