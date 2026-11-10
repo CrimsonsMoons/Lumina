@@ -1,1 +1,0 @@
-Lumina Studio V83.3 — Launcher visible by default; about:blank as the primary launch mode
