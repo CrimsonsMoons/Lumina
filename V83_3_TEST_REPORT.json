@@ -1,0 +1,19 @@
+{
+  "version": "83.3",
+  "purpose": "Restore visible start screen and user-initiated about:blank launch as primary mode",
+  "checks": {
+    "launcher_regression": "10/10 pass",
+    "close_flow": "7/7 pass",
+    "project_structure": "26/26 pass",
+    "save_bridge": "9 assertions pass",
+    "javascript_syntax": "9/9 pass",
+    "simulated_chromium_popup": "5/5 pass for public launcher with mocked workspace; URL remained about:blank",
+    "real_http_browser_navigation": "not verified, environment returned ERR_BLOCKED_BY_ADMINISTRATOR"
+  },
+  "limitations": [
+    "Chrome may block automatic popups without user activation",
+    "A manually opened starter tab cannot reliably be programmatically closed",
+    "Simulated browser run used a stubbed workspace payload, not the full hosted app"
+  ],
+  "key": "private key carried forward unchanged from V83.2; not safe to publish"
+}

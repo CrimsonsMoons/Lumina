@@ -47,28 +47,28 @@
     // Persist the user's launch choice before the workspace loads.
     const privateFlag=document.getElementById('privateMode').checked?'1':'0';
     html=html.replace('</head>',"<script>try{localStorage.setItem('lumina_privacy_mode_v2','"+privateFlag+"')}catch(e){}<\/script></head>");
-    // In-app control for the V83.2 single-tab auto-start preference.
-    // Turning this off re-enables the launcher on the next visit.
+    // In-app escape hatch: auto-launch opens a second tab, so the user
+    // must still be able to turn it OFF from inside the running workspace.
     // Add one small control beside the existing floating-chat settings.
     const autoSettingScript=`<script>(function(){
-      const pref='lumina_launcher_seamless_v832';
+      const pref='lumina_launcher_auto_blank_v833';
       function init(){
         const anchor=document.getElementById('pipPopoutSideBtn');
         if(!anchor||document.getElementById('autoBlankAppBtn'))return;
         const btn=document.createElement('button');
         btn.type='button';btn.id='autoBlankAppBtn';btn.className='side-help';
         function refresh(){
-          let on=true;
-          try{on=localStorage.getItem(pref)!=='0'}
+          let on=false;
+          try{on=localStorage.getItem(pref)==='1'}
           catch(_){
             btn.textContent='Auto-open preference unavailable (storage blocked)';
             btn.disabled=true;
             btn.title='This browser session does not allow local storage; automatic launch preferences cannot be saved.';
             return;
           }
-          btn.textContent='↗ Auto-start in this tab: '+(on?'On':'Off');
+          btn.textContent='↗ Auto-open about:blank: '+(on?'On':'Off');
           btn.setAttribute('aria-pressed',String(on));
-          btn.title='Automatically open Lumina in the current tab on your next visit. No extra starter tab. For a separate about:blank tab, use the optional launcher.';
+          btn.title='Attempt to open an about:blank workspace on your next visit. Default is off; browsers may block automatic pop-ups.';
         }
         btn.addEventListener('click',()=>{
           try{localStorage.setItem(pref,btn.getAttribute('aria-pressed')==='true'?'0':'1')}catch(_){}
@@ -414,9 +414,9 @@
       return false;
     }
   }
-  // V83.2: The only reliable way to avoid a non-closable starter is to
-  // launch the app in the original tab. Separate about:blank is opt-in;
-  // it may need the user to close a browser-owned starter manually.
+  // V61: A true about:blank document is reliably available only in the
+  // NEW browsing context created synchronously by the user's click. There is
+  // no same-tab about:blank injection here: `_self` does not create one.
   // V37: about:blank is created synchronously from the user's click.
   // An automatic attempt on page load can be blocked by Chromium even with
   // an existing preference; checkbox activation now launches immediately,
@@ -434,7 +434,7 @@
   }
 
   // V64: Local launch telemetry only. No keys, chat contents or full URLs recorded.
-  const launchDebug={version:67, attempt:0, events:[], timings:{}, outcome:'not-started', offlineChecks:[], openedVia:'', browser:'',runtimeErrors:0,
+  const launchDebug={version:83.3, attempt:0, events:[], timings:{}, outcome:'not-started', offlineChecks:[], openedVia:'', browser:'',runtimeErrors:0,
     starterClose:{status:'not-attempted',attempts:0,reason:'',afterReadyMs:null}};
   let launchTick=performance.now();
   let lastLaunchStart=launchTick;
@@ -743,30 +743,32 @@
     return true;
   }
   try{document.getElementById('privateMode').checked=localStorage.getItem('lumina_privacy_mode_v2')==='1'}catch(_){}
-  // V83.2: Auto-start in the EXISTING tab, not a popup. A browser-owned
-  // tab cannot reliably be programmatically closed. Avoid creating it.
-  const AUTO_START_PREF='lumina_launcher_seamless_v832';
+  // V83.3: Show the launcher first. Automatic about:blank is opt-in;
+  // browser popup restrictions still apply. Never silently replace the page.
+  // Chrome normally blocks it without user activation; do not bypass browser
+  // security or falsely claim success. Manual click remains the fallback.
+  const AUTO_START_PREF='lumina_launcher_auto_blank_v833';
   const autoBlankToggle=document.getElementById('autoOpen');
-  try{autoBlankToggle.checked=localStorage.getItem(AUTO_START_PREF)!=='0';}
-  catch(_){autoBlankToggle.checked=true;}
+  try{autoBlankToggle.checked=localStorage.getItem(AUTO_START_PREF)==='1';}
+  catch(_){autoBlankToggle.checked=false;}
   autoBlankToggle.addEventListener('change',()=>{
     const enabled=autoBlankToggle.checked;
     try{localStorage.setItem(AUTO_START_PREF,enabled?'1':'0');}catch(_){}
     if(!enabled){
       showBlockedHelp(false);
-      showLaunchStatus('Automatic single-tab launch is off. The launcher will stay visible on your next visit.');
+      showLaunchStatus('Automatic about:blank launch is off. The launcher will stay visible until you click Start.');
       return;
     }
-    showLaunchStatus('Opening Lumina in this tab. No second tab is created.');
-    loadWorkspaceInPlace();
+    showLaunchStatus('Automatic about:blank launch enabled; trying it now…');
+    openWorkspaceInBlankTab('manual'); // Checkbox change has a real user gesture.
   });
-  document.getElementById('launch').addEventListener('click',loadWorkspaceInPlace);
+  document.getElementById('launch').addEventListener('click',()=>openWorkspaceInBlankTab('manual'));
   document.getElementById('openSeparateTab').addEventListener('click',()=>openWorkspaceInBlankTab('manual'));
   document.getElementById('openInTab').addEventListener('click',loadWorkspaceInPlace);
   const directRequested=new URLSearchParams(location.search).get('direct')==='1';
   const launcherRequested=new URLSearchParams(location.search).get('launcher')==='1';
   if(directRequested||launcherRequested){
-    showLaunchStatus('Launcher is open on request. Select one-tab or separate about:blank mode.');
+    showLaunchStatus('Launcher is open on request. Select how you want to start Lumina.');
   }
   document.getElementById('nativePipProbe').addEventListener('click',async()=>{
     const target=document.getElementById('status');
@@ -793,12 +795,11 @@
       : 'Native floating unavailable in this context: '+[!secure?'not a secure context':null,!api?'Document PiP API missing or disabled':null].filter(Boolean).join('; ')+'. Try the hosted HTTPS version in current Chrome or Edge.';
     document.getElementById('status').textContent=result;
   });
-  // Only one tab exists in the default flow. This avoids relying on
-  // window.close() being allowed for the browser-created starter tab.
-  // ?launcher=1 preserves the launcher for key entry and mode selection.
+  // Try immediately when a user visits the site; do not wait for the load
+  // event or for a second visit. Only one automatic attempt per navigation.
+  // ?launcher=1 and ?direct=1 intentionally keep the landing page visible.
   if(!directRequested&&!launcherRequested&&autoBlankToggle.checked){
-    showLaunchStatus('Opening Lumina in this tab — no starter or extra tab.');
-    loadWorkspaceInPlace();
+    openWorkspaceInBlankTab('automatic');
   }else if(!directRequested&&!launcherRequested){
-    showLaunchStatus('Auto-start is disabled. Click Start Lumina for a single-tab launch.');
+    showLaunchStatus('Automatic about:blank launch is disabled. Click Open about:blank now when you want to start.');
   }

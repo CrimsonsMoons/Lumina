@@ -1,4 +1,4 @@
-# Lumina Studio V83.2 — Modular GitHub Pages / Netlify
+# Lumina Studio V83.3 — Modular Start Screen + about:blank
 
 **PRIVATE LOCAL COPY — PERSONAL VERSION:** this includes your previously saved Gemini configuration. Do not upload this ZIP or its contents to GitHub, Netlify, or any publicly accessible host. Use only on trusted local/private infrastructure.
 
@@ -7,7 +7,7 @@
 1. Extract this entire ZIP. Do not upload just index.html; the folders are required.
 2. Upload `index.html`, `css/`, `js/`, `workspace/`, and `library/` to the **root** of your repository.
 3. In Settings > Pages, set **Deploy from a branch**, choose your branch (usually main), and folder `/ (root)`.
-4. Open the GitHub Pages URL. Allow a popup for the site if you want the `about:blank` workspace. By default Lumina starts in your current tab, with no extra starter. To use the optional separate `about:blank` mode, add `?launcher=1` to your URL and choose **Open separate about:blank tab**.
+4. Open the GitHub Pages URL. Allow a popup for the site if you want the `about:blank` workspace. Lumina shows its start screen. Click **Launch Lumina in about:blank** to open the separate workspace. Automatic blank launch is optional and off by default; Chrome may block pop-ups without a user click.
 5. Enter your Gemini key in the launcher **for your personal session**. Never commit an API key or upload a personal build to a public repository.
 
 ## Directory overview
@@ -32,7 +32,7 @@
 
 - This modular version requires the site files to be served by HTTP(S); simply opening index.html from disk may not allow fetch() to load workspace files.
 - An `about:blank` tab is opened synchronously when possible and then populated from the hosted files. The URL remains `about:blank`; assets are downloaded from the GitHub Pages origin.
-- Popup policies apply only to the optional separate about:blank mode. Default automatic single-tab launch does not open a popup.
+- Popup policies apply to about:blank tabs. The main Launch button uses a user click; automatic opening must be enabled explicitly.
 - Blackjack runs in a sandboxed frame **without allow-same-origin**. Its permitted balance and labor-progress storage keys are bridged to the parent. On-site persistence depends on browser storage permissions and can vary with privacy modes.
 - Public repository sources and deployed assets are always inspectable. Renaming UI labels or files cannot guarantee a network filter will allow the site.
 - GitHub Pages is static hosting: it cannot securely hide a Gemini key. For a shared/public site, use a separately secured backend or have each user supply their own key.
@@ -61,12 +61,11 @@ Run `python tests/check_structure.py` and `node tests/check_bridge.js` from the 
 - The separate Lumina workspace is never closed by the launcher. `Start in this tab` remains available when a single-tab workflow is preferred (the URL stays visible).
 - This is a browser limitation, not an error loading the workspace.
 
-## V83.2 — No-extra-tab launch (default)
+## V83.3 — Restore start screen + blank-tab launch
 
-- **Default:** the hosted launcher prefetches `workspace/index.html`, then replaces its own page contents with Lumina. No separate starter tab is created, so there is no tab for `window.close()` to fail to close.
-- **Tradeoff:** the browser address bar remains the GitHub Pages or Netlify URL. A site cannot reliably auto-close a browser-owned starter tab or keep `about:blank` in a same-tab navigation.
-- **Optional separate `about:blank` mode:** visit `?launcher=1`, then choose **Open separate about:blank tab**. The working space keeps that URL, but the original browser-owned starter may require Ctrl+W.
-- **Auto-start preference:** toggle **Auto-start Lumina in this tab** from the launcher or inside the app's settings. `?launcher=1` always lets you adjust the launcher configuration.
-- The deployed public ZIP is keyless; the private ZIP contains an extractable key and must never be uploaded.
-
-The user can use **Start Lumina — no extra tab** even when automatic launch is disabled.
+- The launcher stays visible when you open the site. It no longer replaces itself with the workspace.
+- **Launch Lumina in about:blank** is the primary button. Click to create the blank workspace and populate it with the modular assets.
+- Optional auto-open uses a new preference (off by default) to avoid inheriting the V83.2 single-tab setting. Automatic pop-ups may be blocked.
+- The original starter tab is auto-closed only when the browser allows it. Manually opened browser tabs normally cannot be closed by a website; use Ctrl+W / Cmd+W.
+- **Start in this tab** stays as a fallback; it does not display `about:blank` in the URL.
+- Keep the personal ZIP private because the embedded Gemini key can be extracted; use only the keyless public package on GitHub Pages.

@@ -1,1 +1,1 @@
-Lumina Studio V83.2 — Seamless single-tab launch (no leftover starter)
+Lumina Studio V83.3 — Launcher visible by default; about:blank as the primary launch mode
