@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090909">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Lumina Studio is a private-first writing and study workspace with drafting, proofreading and Gemini assistance.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; img-src 'self' data: blob: https:; font-src 'none'; object-src 'none'; frame-src 'self' about: blob:; base-uri 'self'; form-action 'none'">
+  <title>&#8203;</title>
+  
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="css/launcher.css">
+</head>
+<body>
+<header class="top"><div class="brand"><div class="logomark">L</div><span>lumina <em>STUDIO</em></span></div><div class="header-right"><span class="tag">Your workspace, simplified</span><span class="tag primary"><span class="signal"></span> Private-first</span></div></header>
+<div class="layout">
+ <section class="left"><div class="eyebrow">The personal writing workspace</div><h1>Your ideas.<br><span class="gradient">No distractions.</span></h1><p class="lede">A beautiful space to think, write and ask anything. Add screenshots, get visual explanations, and keep everything simple.</p>
+ <div class="feature-row"><span class="feature"><strong>↗</strong> Write & edit</span><span class="feature"><strong>✧</strong> Image understanding · Gemini modes</span><span class="feature"><strong>◇</strong> Privacy controls</span></div>
+ <div class="preview" aria-hidden="true"><div class="preview-top"><span></span><span></span><span></span><b>LUMINA STUDIO / YOUR DRAFT</b></div><div class="preview-body"><div class="preview-kicker">TODAY'S WORKSPACE</div><h2>Start with a thought.</h2><div class="fake-lines"></div><div class="fake-lines short"></div><div class="fake-lines"></div><div class="fake-lines tiny"></div><div class="preview-footer"><span>Proofread</span><span>Summarize</span><span>Make an outline</span></div></div></div>
+ </section>
+  <section class="right"><div class="glow"></div><div class="panel">
+    <div class="panel-top"><div><div class="panel-label">Your personal workspace</div><h2>Start Lumina</h2></div><div class="ready"><i></i> Ready</div></div>
+    <p class="launch-subtitle">Lumina will <b>try opening about:blank when you visit</b>. If Chrome blocks it, click below. <b>Browser-opened starter tabs need Ctrl+W to close.</b> Lumina never closes your workspace tab.</p>
+    <div class="panel-launch-actions">
+      <button class="primary-button" type="button" id="launch">Open about:blank now</button>
+      <button class="secondary-button" type="button" id="openSeparateTab" hidden>Open another about:blank tab</button>
+      <button class="secondary-button" type="button" id="openInTab">Start in this tab (URL stays visible)</button>
+    </div>
+    <label class="launch-toggle" for="autoOpen"><input id="autoOpen" type="checkbox"><span><strong>Try about:blank automatically</strong><small>On by default. Attempt to open Lumina as soon as this site loads. If Chrome blocks it, use Open about:blank now. Turn this off to keep the launcher visible.</small></span></label>
+    <div id="status" class="launch-status" role="status" aria-live="polite"></div>
+
+    <details id="launchDiagnostics" class="launch-debug" open>
+      <summary>Launch diagnostics <span id="diagElapsed">Ready</span></summary>
+      <small>Times are measured in this browser. No chat messages, API keys, or full website addresses are included in reports.</small>
+      <div id="diagPhase" class="diag-phase" role="status">No launch measured yet.</div>
+      <pre id="diagLog" role="log" aria-live="polite">Open about:blank to measure every launch step.</pre>
+      <div class="diag-buttons">
+        <button type="button" id="runLaunchChecks">Run offline checks</button>
+        <button type="button" id="copyLaunchReport">Copy report</button>
+        <button type="button" id="saveLaunchReport">Save report</button>
+      </div>
+      <div id="diagCheckResults" class="diag-results" aria-live="polite"></div>
+    </details>
+    <div id="popupBlockedHelp" class="launch-finished" hidden>
+      <p><strong>Chrome blocked the automatic about:blank tab.</strong> Try <b>Open about:blank now</b> above. To allow future automatic launches, click the blocked pop-up icon in Chrome's address bar, select <b>Always allow pop-ups and redirects from this site</b>, and reload. On a managed Chromebook, your administrator may restrict this.</p>
+      <p><strong>Still blocked?</strong> Start in this tab to use Lumina without a popup. That option keeps the website address, not about:blank.</p>
+    </div>
+    <div id="launcherCloseFallback" class="launch-finished" hidden>
+      <p><strong>Check the Lumina tab before closing this launcher.</strong> Lumina is ready in the other tab. Chrome normally will not let a manually opened starter close itself, so use your browser’s close-tab shortcut.</p>
+      <div class="launcher-close-actions">
+        <button id="focusBlankWorkspace" type="button" class="primary-button">Switch to Lumina</button>
+        <button id="closeStarterAgain" type="button" class="secondary-button">How to close this tab</button>
+      </div>
+      <p class="launch-close-shortcut" id="closeOutcomeInfo" role="status">With this starter selected, press <kbd>Ctrl</kbd> + <kbd>W</kbd> (<kbd>⌘</kbd> + <kbd>W</kbd> on Mac). The Lumina tab will stay open.</p>
+    </div>
+    
+    <details id="launcherSettings" class="launcher-settings" open><summary>API key &amp; privacy settings</summary>
+      <div class="settings-content">
+        <label class="field-label" for="geminiKey">Gemini API key <small>Required for Gemini</small></label>
+        <div class="keyrow"><input id="geminiKey" type="password" placeholder="Paste Gemini API key" autocomplete="off" spellcheck="false" autocapitalize="off"><button type="button" id="toggleKey" aria-label="Show API key" aria-pressed="false">Show</button></div>
+        <p class="keynote" id="keyInfo">Your key is used to contact Gemini. Never publish a page containing an embedded key.</p>
+        <div class="divider"></div>
+        <label class="switchrow"><input id="privateMode" type="checkbox"><span>Private session<small>Don't save new chats or drafts on this device.</small></span></label>
+        <button id="wipeLauncher" type="button" class="secondary-button">Clear saved Lumina data</button>
+      </div>
+    </details>
+    <p class="panel-note">Lumina uses Gemini for AI replies. Your chats are saved in this browser, not synced between devices.</p>
+    <!-- Legacy diagnostics are retained for compatibility but removed from the startup UI. -->
+    <div hidden aria-hidden="true">
+      <button id="quickPip" type="button">Legacy floating workspace</button>
+      <button id="checkPipSupport" type="button">PiP diagnostics</button>
+      <button id="nativePipProbe" type="button">PiP test</button>
+      <div id="blankHostTools" hidden><button id="blankHostFloat" type="button">Legacy PiP</button><div id="blankHostStatus"></div></div>
+    </div>
+  </div></section>
+
+</div>
+<footer><div>© Lumina Studio <span>· A more focused workspace</span></div><div>Lumina V83.1 · Starter Closure Guidance</div></footer>
+<script src="js/config.js"></script>
+<script src="js/launcher.js"></script>
+</body></html>

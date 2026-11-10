@@ -1,0 +1,2 @@
+Lumina Studio V83.1 — Launcher close behavior fix
+Modular GitHub Pages build

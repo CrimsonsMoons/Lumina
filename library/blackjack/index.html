@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090d14" />
+  <meta name="description" content="Lumina Blackjack: always-visible quick deal, betting chips, and table play controls; wallet, casino rules, sounds, and cleaning shifts." />
+  <title>Lumina • Blackjack v15 · Fullscreen Table</title>
+  
+<script src="storage-bridge.js"></script>
+  <link rel="stylesheet" href="blackjack.css">
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="brand"><div class="brand-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.7 21.3 12 12 21.3 2.7 12 12 2.7Z" stroke="currentColor" stroke-width="1.6"/><path d="m12 6.5 5.5 5.5-5.5 5.5L6.5 12 12 6.5Z" fill="currentColor" opacity=".45"/></svg></div><div><div class="brand-title">lumina <span style="font-weight:450;color:#b4a8cb">/ Library</span></div><div class="brand-sub">Blackjack · Fullscreen Casino</div></div></div>
+    <div class="header-right"><button type="button" class="icon-btn" id="headerOptions" title="Options, wallet and settings" aria-label="Open all table options">⚙</button><button class="icon-btn stats-trigger" id="openStats" aria-label="Open achievements and stats" title="Achievements & history">🏆</button>
+      <div class="bankroll" aria-live="polite"><span class="bankroll-label">Virtual balance</span><span id="balance" class="bankroll-value"><span class="symbol">◈</span>50,000</span></div>
+      <button class="icon-btn" id="soundToggle" type="button" aria-label="Mute sound effects" aria-pressed="true" title="Sound on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path class="sound-waves" d="M15 9a5 5 0 0 1 0 6M18 6a9 9 0 0 1 0 12"/><path class="sound-slash" d="m16 8 6 8" style="display:none"/></svg></button>
+    </div>
+  </header>
+  <main class="layout">
+    <section class="table-column" aria-label="Blackjack table">
+      <div class="table-topline"><div class="eyebrow">The table <span style="color:#666f80;margin:0 5px">/</span> Fullscreen table · virtual chips only</div><div class="live"><span class="live-dot"></span><span id="tableState">READY TO PLAY</span></div></div>
+      <div class="felt" id="feltSurface"><div class="shoe-decoration" id="shoeDecoration" aria-hidden="true"><span class="shoe-playing-card"></span><span class="shoe-playing-card"></span><span class="shoe-playing-card"></span><small>DEALER SHOE</small></div>
+        <div class="table-glow"></div>
+        <div class="felt-balance" aria-label="Your available virtual virtual chips"><span class="felt-balance-label">YOUR BALANCE</span><strong id="tableBalance">◈ 50,000</strong></div>
+        <section class="dealer-zone" aria-label="Dealer hand"><div class="zone-label">Dealer <span id="dealerScore" class="score">–</span></div><div class="cards" id="dealerCards"><div class="placeholder-card"></div><div class="placeholder-card"></div></div></section>
+        <div class="table-center"><div class="felt-mark">L U M I N A</div>
+<div class="felt-sub">BLACKJACK PAYS 3:2 · DEALER <span id="dealerRule">STANDS ON ALL 17</span> · LATE SURRENDER</div>
+<div class="status-bubble" id="status" role="status" aria-live="polite">Choose your chips to place a bet and start playing.</div>
+<div class="insurance-offer" id="insuranceOffer" hidden><strong>Insurance?</strong><p>Dealer shows an Ace. Insurance is optional and pays 2:1 only against dealer Blackjack.</p><div class="insurance-buttons"><button id="takeInsurance" type="button">Take insurance</button><button id="declineInsurance" type="button">No thanks</button></div></div>
+<div id="chipDrop" class="table-bet-spot" aria-label="Drop a chip here to bet"><span class="ring-heading">BETTING CIRCLE</span><strong id="tableBet">◈ 0</strong><span class="ring-caption" id="tableSeats">1 HAND · CHIP DROP ZONE</span></div>
+</div>
+        <section class="player-zone" aria-label="Your hand"><div class="zone-label">Your hand <span id="playerScore" class="score">–</span></div><div class="hands-wrap" id="playerHands"><div class="hand"><div class="cards"><div class="placeholder-card"></div><div class="placeholder-card"></div></div></div></div></section>
+
+        <section class="table-hud" id="tableHud" aria-label="Table controls on the blackjack table">
+          <div class="hud-betting" id="hudBetting">
+            <div class="hud-head">
+              <div class="hud-head-left"><span class="hud-eyebrow">PLACE YOUR WAGER</span><strong id="hudValue">◈ 0</strong></div>
+              <div id="hudSeatSlot" class="hud-seat-slot"></div>
+            </div>
+            <div id="hudChipSlot" class="hud-chips"></div>
+            <div class="hud-utilities">
+              <div id="hudBetToolsSlot" class="hud-undo-slot"></div>
+              <div id="hudAllInSlot" class="hud-allin-slot"></div>
+              <button type="button" id="hudCustom" class="hud-utility" aria-label="Open custom bet and side bets">Custom / bets</button>
+              <button type="button" id="hudWallet" class="hud-utility">+ Money</button>
+            </div>
+          </div>
+          <div class="hud-playing" id="hudPlaying" hidden>
+            <div class="hud-head hud-turn-head"><div><span class="hud-eyebrow">YOUR MOVE</span><strong id="hudTurn">Hand 1 of 1</strong></div><span class="hud-live">● LIVE ROUND</span></div>
+            <div id="hudActionSlot"></div>
+          </div>
+          <div class="hud-insurance" id="hudInsurance" hidden>
+            <div id="hudInsuranceSlot"></div>
+          </div>
+          <div class="hud-busy" id="hudBusy" hidden><span class="hud-loader"></span><strong id="hudBusyText">Dealing cards…</strong></div>
+          <div class="hud-result" id="hudResult" hidden><span class="hud-eyebrow">ROUND COMPLETE</span><strong id="hudResultText">Ready for another hand?</strong></div>
+          <div class="hud-shared" id="hudShared">
+            <div id="hudPrimarySlot"></div>
+            <div id="hudJobSlot"></div>
+          </div>
+          <p class="hud-warning" id="hudError" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+      <div class="table-footer"><span><strong>Table rules:</strong> 6-deck cut shoe · 3:2 blackjack · virtual chips only</span><span id="shoeState">Fresh 6-deck shoe</span></div>
+    </section>
+    <aside class="sidebar">
+      <section class="panel" aria-label="Table controls">
+        <div class="wallet-credit" aria-label="Add virtual money to your balance">
+          <div class="wallet-title"><span>💰 Add money to your balance</span><span class="wallet-tag">VIRTUAL ONLY</span></div>
+          <div class="wallet-help">Give yourself chips directly. This does <strong>not</strong> place a bet or require cleaning.</div>
+          <div class="wallet-form"><input id="walletAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Enter any amount" aria-label="Amount of virtual money to add"><button id="walletAdd" type="button">+ Add money</button></div>
+          <div class="wallet-preset-row" aria-label="Quick virtual money amounts">
+            <button type="button" class="wallet-preset" data-credit="100">+100</button><button type="button" class="wallet-preset" data-credit="1000">+1K</button><button type="button" class="wallet-preset" data-credit="10000">+10K</button><button type="button" class="wallet-preset" data-credit="100000">+100K</button>
+          </div><div id="walletFeedback" role="status" aria-live="polite"></div>
+        </div>
+        <div class="panel-header"><span class="panel-title" id="betTitle">Place your bet</span><span class="panel-kicker" id="phaseLabel">YOUR TURN NEXT</span></div>
+        <div class="bet-number"><span>◈</span><span id="betValue" style="font-size:inherit;color:inherit;vertical-align:0;padding:0">0</span></div>
+        <div class="small-copy" id="betHint">Choose how many hands, then tap or drag chips.</div>
+<div class="seat-title"><span>PLAY HOW MANY HANDS?</span><span>Same starting bet per hand</span></div>
+<div class="seat-picker" aria-label="Starting hands"><button class="seat-btn selected" data-seats="1" type="button">1 hand</button><button class="seat-btn" data-seats="2" type="button">2 hands</button><button class="seat-btn" data-seats="3" type="button">3 hands</button></div>
+        <div class="chips" aria-label="Betting chips"><button class="chip" data-value="5" title="Add 5 chips">5</button><button class="chip" data-value="25" title="Add 25 chips">25</button><button class="chip" data-value="100" title="Add 100 chips">100</button><button class="chip" data-value="500" title="Add 500 chips">500</button><button class="chip" data-value="1000" title="Add 1,000 chips">1K</button><button class="chip" data-value="5000" title="Add 5,000 chips">5K</button><button class="chip" data-value="10000" title="Add 10,000 chips">10K</button><button class="chip" data-value="25000" title="Add 25,000 chips">25K</button></div>
+        <div class="extra-bets"><div class="extra-heading"><span>OPTIONAL SIDE BETS</span><span>First hand only</span></div>
+<div class="extra-bet"><div><strong>Perfect Pairs</strong><small>Same-rank opening cards · up to 25:1</small></div><div class="side-controls"><button id="pairsRemove" type="button" aria-label="Remove 25 Perfect Pairs chips">−</button><b id="pairsStake">0</b><button id="pairsAdd" type="button" aria-label="Add 25 Perfect Pairs chips">+</button></div></div>
+<div class="side-presets"><label for="pairsPreset">Amount</label><select id="pairsPreset"><option value="0">Off</option><option value="25">25</option><option value="100">100</option><option value="500">500</option><option value="1000">1K</option><option value="5000">5K</option><option value="25000">25K</option></select></div>
+<div class="extra-bet"><div><strong>21+3</strong><small>Your first 2 + dealer's upcard · up to 100:1</small></div><div class="side-controls"><button id="trioRemove" type="button" aria-label="Remove 25 21 plus 3 chips">−</button><b id="trioStake">0</b><button id="trioAdd" type="button" aria-label="Add 25 21 plus 3 chips">+</button></div></div>
+<div class="side-presets"><label for="trioPreset">Amount</label><select id="trioPreset"><option value="0">Off</option><option value="25">25</option><option value="100">100</option><option value="500">500</option><option value="1000">1K</option><option value="5000">5K</option><option value="25000">25K</option></select></div>
+</div>
+<div class="wager-heading"><strong>Custom wager</strong><small>Any amount · minimum ◈ 5 · up to 2 decimals</small></div>
+<div class="bet-custom"><input id="customBet" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="e.g. 1450.75" aria-label="Enter a custom virtual chip amount"><button id="setCustomBet" type="button" title="Replace the current main wager with this amount">Set amount</button><button id="addCustomBet" type="button" title="Add this amount to the current main wager">+ Add</button></div>
+        <div class="bet-tools"><button class="text-btn" id="undoBet">↶ Undo</button><button class="text-btn" id="clearBet">Clear bet</button></div>
+        <button class="all-in-btn" id="maxBet" type="button" title="Bet your entire available virtual bankroll on one hand. Clears optional side bets."><span class="all-in-title">♠ ALL IN</span><span class="all-in-amount" id="allInValue">◈ 50,000</span></button>
+        <div class="all-in-hint" id="allInHint">Uses all your virtual chips on one hand · clears side bets</div>
+<div class="bet-tools advanced-tools"><button class="text-btn" id="repeatBet">↻ Repeat last</button><button class="text-btn" id="doubleBet">×2 Bet</button></div>
+        <button class="primary" id="primaryAction">Deal cards <span aria-hidden="true">↗</span></button>
+        <button class="topup-btn" id="topupChips" type="button">🧹 Broke? Apply for manual labor</button>
+        <div class="topup-hint" id="topupHint">Broke? Scrub, haul trash and mop for a tiny wage · Virtual chips only</div>
+        <div class="divider"></div>
+        <div class="actions-label">Your move</div>
+        <div class="action-grid">
+          <button class="action-btn" id="hitBtn"><span aria-hidden="true">＋</span> Hit</button>
+          <button class="action-btn" id="standBtn"><span aria-hidden="true">✋</span> Stand</button>
+          <button class="action-btn special" id="doubleBtn"><span aria-hidden="true">✕2</span> Double</button>
+          <button class="action-btn special" id="splitBtn"><span aria-hidden="true">♢</span> Split</button><button class="action-btn surrender-btn" id="surrenderBtn"><span aria-hidden="true">↩</span> Surrender</button>
+        </div>
+        <div class="sound-settings"><label for="volumeControl">Sound effects</label><input id="volumeControl" type="range" min="0" max="100" step="5" value="35" aria-label="Sound effects volume"><output id="volumeValue" for="volumeControl">35%</output></div>
+        <div class="sound-preview"><span class="sound-preview-title">Sound check <small>Recorded chips · Offline</small></span><div class="preview-btns"><button class="preview-btn" id="previewChips" type="button" aria-label="Preview single chip sound">◈ Chip</button><button class="preview-btn" id="previewAllIn" type="button" aria-label="Preview Max Bet chips sound">◈ All In</button><button class="preview-btn" id="previewCards" type="button" aria-label="Preview card sounds">♠ Cards</button><button class="preview-btn" id="previewUI" type="button" aria-label="Preview menu button sounds">✦ UI</button><button class="preview-btn" id="previewTwentyOne" type="button" aria-label="Preview 21 celebration sound">★ 21</button><button class="preview-btn" id="previewLose" type="button" aria-label="Preview losing sound">↓ Lose</button><button class="preview-btn" id="previewWin" type="button" aria-label="Preview winning sound">✧ Win</button></div></div>
+        <div id="errorMsg" role="alert" aria-live="assertive"></div>
+      </section>
+      <section class="panel stats-panel" aria-label="Player statistics">
+        <div class="panel-header"><span class="panel-title">Your progress</span><span class="panel-kicker" id="roundNumber">0 ROUNDS</span></div>
+        <div class="stats"><div class="stat"><strong id="wins">0</strong><span>Wins</span></div><div class="stat"><strong id="losses">0</strong><span>Losses</span></div><div class="stat"><strong id="pushes">0</strong><span>Pushes</span></div></div>
+        <div class="mini-progress"><div><small>Best win</small><strong id="biggestWin">◈ 0</strong></div><div><small>Win streak</small><strong id="streakValue">0</strong></div><div><small>Blackjacks</small><strong id="blackjacksValue">0</strong></div></div>
+        <button class="achievements-button" id="openStatsSecondary" type="button"><span>🏆 Achievements & round history</span><strong id="achievementCount">0/10</strong></button>
+        <label class="rule-toggle"><span>Dealer hits soft 17 <small>Optional house rule</small></span><input type="checkbox" id="soft17Toggle" /></label>
+        <button class="how-link" id="openRules" type="button">How to play + table rules</button>
+      </section>
+      <div class="side-footer">For entertainment only. Virtual chips have no cash value. Your balance and stats are saved in this browser.</div>
+    </aside>
+  </main>
+</div>
+<dialog id="tableOptionsDialog" class="table-options-dialog" aria-labelledby="tableOptionsTitle">
+  <div class="options-head"><div><span>TABLE SETTINGS</span><h2 id="tableOptionsTitle">More options</h2></div><button type="button" id="closeTableOptions" aria-label="Close options">✕</button></div>
+  <div id="tableOptionsContent"></div>
+</dialog>
+<nav class="mobile-actions" id="mobileActions" aria-label="Always available table controls">
+  <div class="dock-betting" id="dockBetting">
+    <div class="dock-wager-summary"><span class="dock-overline">YOUR BET <span id="dockHandCount">· 1 HAND</span></span><strong id="dockWager">◈ 0</strong></div>
+    <div class="dock-chip-shortcuts" role="group" aria-label="Quick add betting chips">
+      <button type="button" class="dock-chip" data-dock-chip="25" aria-label="Add 25 chips to your wager">+25</button>
+      <button type="button" class="dock-chip" data-dock-chip="100" aria-label="Add 100 chips to your wager">+100</button>
+      <button type="button" class="dock-chip" data-dock-chip="500" aria-label="Add 500 chips to your wager">+500</button>
+      <button type="button" class="dock-chip dock-allin" id="dockAllIn">All in</button>
+    </div>
+    <button type="button" class="dock-wallet" id="dockWalletOpen" aria-expanded="false" aria-controls="dockWalletPopover" title="Add money without scrolling">＋ Wallet</button>
+    <button type="button" class="dock-deal" id="dockDeal">Quick deal <span aria-hidden="true">↗</span></button>
+  </div>
+  <div class="dock-playing" id="dockPlaying" hidden>
+    <div class="dock-turn-label" id="dockTurnLabel" aria-live="polite">YOUR MOVE</div>
+    <button class="action-btn dock-hit" id="mobileHit" type="button">＋ Hit</button>
+    <button class="action-btn dock-stand" id="mobileStand" type="button">✋ Stand</button>
+    <button class="action-btn special" id="mobileDouble" type="button">×2 Double</button>
+    <button class="action-btn special" id="mobileSplit" type="button">♢ Split</button>
+    <button class="action-btn surrender-btn" id="mobileSurrender" type="button">↩ Surrender</button>
+  </div>
+  <div class="dock-insurance" id="dockInsurance" hidden>
+    <span><strong>Insurance?</strong><small>Dealer shows an Ace</small></span>
+    <button type="button" id="dockTakeInsurance">Take insurance</button>
+    <button type="button" id="dockDeclineInsurance">No thanks · Play</button>
+  </div>
+  <div class="dock-result" id="dockResult" hidden>
+    <span class="dock-result-label">ROUND COMPLETE <strong id="dockResultText">Play again?</strong></span>
+    <button type="button" class="dock-wallet" id="dockResultWallet">＋ Wallet</button>
+    <button type="button" class="dock-deal" id="dockNextRound">Next round ↗</button>
+  </div>
+  <div class="dock-busy" id="dockBusy" hidden><span class="dock-busy-dot"></span><strong id="dockBusyText">Dealing cards…</strong></div>
+  <div class="dock-wallet-popover" id="dockWalletPopover" hidden>
+    <label for="dockWalletAmount">Add virtual chips to your balance</label>
+    <div class="dock-wallet-entry"><input id="dockWalletAmount" type="number" min="0.01" step="0.01" inputmode="decimal" value="1000" aria-label="Amount of virtual chips to add"/><button id="dockWalletAdd" type="button">Add chips</button><button type="button" class="dock-wallet-close" id="dockWalletClose" aria-label="Close wallet editor">✕</button></div>
+    <small>Free fictional chips · Does not place a bet</small>
+  </div>
+</nav>
+<dialog id="rulesDialog" aria-labelledby="rulesTitle"><div class="dialog-top"><h2 id="rulesTitle">Blackjack · Table rules</h2><button class="close-btn" id="closeRules" aria-label="Close rules">×</button></div>
+<ol class="rule-list"><li><strong>Goal:</strong> Beat the dealer by reaching 21 or closer without busting. Aces are 1 or 11.</li>
+<li><strong>Betting:</strong> Play 1–3 starting hands, each with the same opening bet. There is no fixed 250,000-chip table limit; you can wager up to the virtual chips you own. Enter an exact amount using Set amount, or add more with + Add. Custom wagers support two decimal places, with a minimum opening wager of ◈ 5 per hand. All In automatically uses your full virtual bankroll for one hand and clears side wagers. All chips are fictional, not real money.</li>
+<li><strong>Natural Blackjack:</strong> Original two-card Ace + 10-value hand pays <strong>3:2</strong>. A 21 after splitting is an ordinary 21, not a natural.</li>
+<li><strong>Hit, Stand, Double:</strong> Double your bet on a two-card hand and take exactly one card. Double after split is allowed if you have chips.</li>
+<li><strong>Split:</strong> Split identical ranks, with enough virtual chips to match the bet, up to four total hands. Split Aces receive one card each and cannot be re-split.</li>
+<li><strong>Surrender:</strong> Late surrender is offered before acting on an original two-card hand, after the dealer checks for Blackjack. You lose half that hand’s bet.</li>
+<li><strong>Insurance:</strong> Offered only when the dealer shows an Ace, costs half the main wager total, pays <strong>2:1 profit</strong> on dealer natural Blackjack, otherwise loses.</li>
+<li><strong>Dealer:</strong> Six decks, shuffled near a cut card; the dealer checks Blackjack before player decisions. Default: stands on all 17. Optional: hits soft 17.</li>
+<li><strong>Perfect Pairs:</strong> First hand’s two cards: mixed pair 5:1; same-color pair 12:1; same-suit pair 25:1.</li>
+<li><strong>21+3:</strong> First hand’s opening cards plus dealer upcard: flush 5:1; straight 10:1; trips 30:1; straight flush 40:1; suited trips 100:1. Side bets are settled separately from main wagers.</li>
+<li><strong>Add money:</strong> Use the green Add money to your balance panel to credit any custom amount of virtual chips directly to your wallet. This does not place a bet. No real-money payments are possible.</li>
+<li><strong>Out of chips?</strong> When you have fewer than 5 chips left and no outstanding wager, you can optionally work a three-stage manual-labor shift. Scrub tables, drag trash bags, then mop. A finished shift pays ◈ 35 virtual chips. Quit cleaning using the X or Quit button; unfinished work is saved and can be resumed later.</li></ol>
+<div class="divider"></div><p class="small-copy">Keyboard shortcuts: <span class="kbd">H</span> Hit · <span class="kbd">S</span> Stand · <span class="kbd">D</span> Double · <span class="kbd">Enter</span> Deal / New round. <strong>No real-money gambling.</strong></p></dialog>
+<dialog id="statsDialog" class="stats-dialog" aria-labelledby="statsTitle"><div class="dialog-top"><h2 id="statsTitle">Your casino record</h2><button class="close-btn" id="closeStats" aria-label="Close achievements">×</button></div>
+<div class="stats-summary"><div><small>Rounds played</small><strong id="statsRounds">0</strong></div><div><small>Hands won</small><strong id="statsHandsWon">0</strong></div><div><small>Best streak</small><strong id="statsBestStreak">0</strong></div><div><small>Blackjacks</small><strong id="statsBlackjacks">0</strong></div></div>
+<p class="stats-sub">Total virtual chips wagered: <strong id="statsWagered">◈ 0</strong> · Labor shifts completed: <strong id="statsShifts">0</strong> · Wages earned: <strong id="statsLaborEarned">◈ 0</strong></p>
+<h3>Achievements</h3><div class="award-grid" id="achievementGrid"></div>
+<h3>Recent rounds</h3><div id="historyList" class="history-list"></div></dialog>
+<dialog id="cleaningDialog" class="cleaning-dialog labor-dialog" aria-labelledby="cleaningTitle" data-task="scrub">
+  <div class="dialog-top"><div><span class="shift-eyebrow">LUMINA CASINO · NIGHT MAINTENANCE CREW</span><h2 id="cleaningTitle">The graveyard shift</h2></div><button class="close-btn" id="closeCleaning" type="button" aria-label="Quit cleaning and save progress" title="Pause shift; your progress is saved">×</button></div>
+  <div class="shift-hero"><span class="shift-stamp">3 STATIONS · BACKBREAKING WORK</span><span class="shift-pay">Full-shift wage <strong>◈ 35</strong></span></div>
+  <div class="labor-stage-tabs" id="laborStageTabs" aria-label="Shift stations"><span class="labor-stage active">01 · SCRUB</span><span class="labor-stage">02 · HAUL</span><span class="labor-stage">03 · MOP</span></div>
+  <div class="labor-station-heading"><div><span class="labor-task-number" id="laborTaskNumber">TASK 1 OF 3</span><h3 id="laborTaskTitle">Scrub the sticky tables</h3></div><span class="labor-task-pay">◈ 35 after all 3 jobs</span></div>
+  <p class="shift-description" id="cleaningInstructions">Hold and drag the sponge back and forth across each sticky stain. Tapping doesn't count as work.</p>
+  <div class="shift-progress-wrap"><div><strong id="cleaningProgressLabel">0 / 6 stains scrubbed</strong><span id="cleaningProgressHint">Actually scrub each stain with repeated strokes</span></div><div class="shift-progress-track"><div id="cleaningProgressBar"></div></div></div>
+  <div class="labor-stamina-row"><div class="labor-stamina-meta"><span>ENERGY <strong id="laborStaminaText">100%</strong></span><div class="stamina-track"><span id="laborStaminaBar"></span></div></div><button type="button" id="laborRest" class="labor-rest" title="Stop working and catch your breath">🥤 Catch your breath</button></div>
+  <div class="cleaning-scene" id="cleaningScene" data-task="scrub" aria-label="Interactive casino manual labor table"><span class="cleaning-scene-title" id="laborSceneTitle">CASINO TABLE 07 · SPILLS EVERYWHERE</span><div class="cleaning-felt" id="cleaningFelt" aria-label="Work area"></div><div class="sponge-cursor" id="spongeCursor" aria-hidden="true">🧽</div></div>
+  <div class="shift-footer"><span id="shiftNotice">Three jobs, one lousy paycheck. You can quit and resume later.</span><div class="labor-footer-buttons"><button class="labor-next" id="quitCleaning" type="button" title="Close cleaning and save unfinished work">✕ Quit cleaning</button><button class="labor-next" id="nextCleaningTask" type="button" hidden>Next station →</button><button class="shift-claim" id="claimPay" type="button" disabled>Collect ◈ 35 <span aria-hidden="true">↗</span></button></div></div>
+</dialog>
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+
+</body>
+</html>

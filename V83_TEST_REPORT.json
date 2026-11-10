@@ -1,0 +1,41 @@
+{
+  "version": "83.1",
+  "checks": {
+    "chromium_dom_smoke": {
+      "passed": 15,
+      "total": 15,
+      "method": "Browsers ran modular JS/CSS from memory using DOM injection, not a live hosted deployment"
+    },
+    "node_script_syntax": {
+      "passed": 9,
+      "total": 9
+    },
+    "static_structure": {
+      "passed": 26,
+      "total": 26
+    },
+    "storage_bridge": {
+      "passed": 9,
+      "total": 9,
+      "note": "message handshake, seeded state, write/remove, allowlist, dynamic script order"
+    },
+    "hosted_browser_navigation": {
+      "status": "NOT VERIFIED",
+      "reason": "Chromium policy blocks navigation to file:, data:, localhost, and test-hosted domains in this environment"
+    }
+  },
+  "limitations": [
+    "Game state persistence was validated at the bridge protocol level; a real GitHub Pages session should be tested after upload.",
+    "Gemini API access and key validity were not tested.",
+    "No claim that site labels affect filtering behavior."
+  ],
+  "v831_closure_note": "A browser-owned starter tab cannot be force-closed by JavaScript; browser-safe fallback added. Live hosted automatic-closure not guaranteed.",
+  "v831_regression_checks": {
+    "static_structure": "26/26 passed",
+    "starter_close_guard": "7/7 passed",
+    "save_bridge": "9/9 passed",
+    "javascript_syntax": "9/9 passed",
+    "hosted_browser_launch": "NOT VERIFIED \u2014 browser environment returned ERR_BLOCKED_BY_ADMINISTRATOR on localhost navigation",
+    "note": "V83 Chromium smoke figures are retained as prior V83 results, not rerun under V83.1."
+  }
+}
